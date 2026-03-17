@@ -1,0 +1,207 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/mohamed2ayman/Claude/blob/main/ChatBotipynb\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Install dependencies\n",
+        "%pip install anthropic python-dotenv\n",
+        "\n",
+        "#Load New Variable\n",
+        "\n",
+        "from dotenv import load_dotenv\n",
+        "load_dotenv()\n",
+        "\n",
+        "#Install dependencies\n",
+        "%pip install anthropic python-dotenv\n",
+        "\n",
+        "#Load New Variable\n",
+        "\n",
+        "from dotenv import load_dotenv\n",
+        "load_dotenv()\n",
+        "\n",
+        "# Create API Client\n",
+        "import os\n",
+        "from anthropic import Anthropic\n",
+        "\n",
+        "from google.colab import userdata\n",
+        "os.environ[\"ANTHROPIC_API_KEY\"] = userdata.get('ANTHROPIC_API_KEY')\n",
+        "\n",
+        "client = Anthropic()\n",
+        "model = \"claude-sonnet-4-5\""
+      ],
+      "metadata": {
+        "id": "bVctb7oz7DDD"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "\n",
+        "\n",
+        "\n",
+        "# Add user message, while will take list of messages and text. it's reason is to append messages together and save history.\n",
+        "\n",
+        "def add_user_message(messages, text):\n",
+        "  user_message = {\"role\": \"user\", \"content\": text}\n",
+        "  messages.append(user_message)\n",
+        "\n",
+        "\n",
+        "def add_assistant_message(messages, text):\n",
+        "  assistant_message = {\"role\": \"assistant\", \"content\": text}\n",
+        "  messages.append(assistant_message)\n",
+        "\n",
+        "\n",
+        "def chat(messages):\n",
+        " message = client.messages.create(\n",
+        "  model = model,\n",
+        "  max_tokens = 1000,\n",
+        "  messages = messages,\n",
+        ")\n",
+        " return message.content[0].text\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "LxPGDQbuL0PL"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Make a starting list of messages\n",
+        "\n",
+        "messages = []\n",
+        "\n",
+        "# Add in the initial user question of \"Define quantum computing in one sentence\"\n",
+        "\n",
+        "add_user_message(messages, \"Define quantum computing in one sentence\")\n",
+        "\n",
+        "# Pass the list of messages into 'Chat' to get an answer\n",
+        "\n",
+        "answer = chat(messages)\n",
+        "\n",
+        "messages\n",
+        "\n",
+        "\n",
+        "# Take the answer and add it as an assistant message into our list.\n",
+        "\n",
+        "add_assistant_message(messages, answer)\n",
+        "\n",
+        "answer\n",
+        "\n",
+        "# Add in the user's follow-up question.\n",
+        "\n",
+        "add_user_message(messages, \"Write another sentence\")\n",
+        "\n",
+        "# Call chat again with the list of messages to get a final answer.\n",
+        "\n",
+        "answer = chat(messages)\n",
+        "answer"
+      ],
+      "metadata": {
+        "id": "x2V7wS8usAbe"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "\n",
+        "# Making a Chat Bot.\n",
+        "\n",
+        "# Make initial list of messages.\n",
+        "\n",
+        "messages = []\n",
+        "\n",
+        "# Use a 'While True' Loop to run the Chatbot forever\n",
+        "\n",
+        "while True:\n",
+        "  # Get user input\n",
+        "  user_input = input(\"> \")\n",
+        "  print(\">\", user_input)\n",
+        "\n",
+        "  # Exit Condition\n",
+        "\n",
+        "  if user_input.lower() == \"quit\":\n",
+        "    print(\"Goodbye!\")\n",
+        "    break\n",
+        "\n",
+        "  # Add user input to list of messages.\n",
+        "\n",
+        "  add_user_message(messages, user_input)\n",
+        "\n",
+        "\n",
+        "  # Call Claude with the 'Chat' function.\n",
+        "\n",
+        "  answer = chat(messages)\n",
+        "\n",
+        "\n",
+        "  # Add generated text to the list of messages.\n",
+        "\n",
+        "  add_assistant_message(messages, answer)\n",
+        "\n",
+        "\n",
+        "  # Print the generated text.\n",
+        "\n",
+        "  print(\"---\")\n",
+        "  print(answer)\n",
+        "  print(\"---\")"
+      ],
+      "metadata": {
+        "id": "EXlgaZ5ZzXR9",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "55462a41-69c6-4847-8b6f-047aabbef278"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "> 2+2\n",
+            "> 2+2\n",
+            "---\n",
+            "2 + 2 = 4\n",
+            "---\n",
+            "> add another 3\n",
+            "> add another 3\n",
+            "---\n",
+            "4 + 3 = 7\n",
+            "---\n",
+            "> quit\n",
+            "> quit\n",
+            "Goodbye!\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
